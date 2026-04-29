@@ -1,9 +1,4 @@
-import {
-  ExpectedStructure,
-  NumberSchema,
-  PathValidationOptions,
-  PrimitiveType,
-} from "../types";
+import { ExpectedStructure, NumberSchema, PathValidationOptions, PrimitiveType } from '../types';
 
 /**
  * Interface that defines the validation rules for a specific field.
@@ -222,7 +217,7 @@ export interface ValidationRule<T = any> {
          * { provider: "oracle" }
          * @default "standard"
          */
-        provider?: "standard" | "oracle";
+        provider?: 'standard' | 'oracle';
       }
     | boolean;
 

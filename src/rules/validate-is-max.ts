@@ -1,5 +1,5 @@
-import { ValidationError } from "../errors";
-import { OutputType } from "../types";
+import { ValidationError } from '../errors';
+import { OutputType } from '../types';
 
 /**
  * Validates if the value is less than or equal to a specified value.
@@ -21,20 +21,16 @@ import { OutputType } from "../types";
  * console.log(errors);
  * // ["The maximum value must not be greater than 10"]
  */
-export function validateIsMax(
-  value: any,
-  max: number,
-  output: OutputType = "record"
-): string[] {
+export function validateIsMax(value: any, max: number, output: OutputType = 'record'): string[] {
   const errors: string[] = [];
 
   if (!value || value === null || value === undefined) {
     return errors;
   }
 
-  if (typeof value === "number" && value > max) {
+  if (typeof value === 'number' && value > max) {
     const errorMessage = `The maximum value must not be greater than ${max}`;
-    if (output === "exception") {
+    if (output === 'exception') {
       throw new ValidationError(errorMessage);
     } else {
       errors.push(errorMessage);

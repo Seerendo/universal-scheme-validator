@@ -1,5 +1,5 @@
-import { ValidationError } from "../errors";
-import { OutputType } from "../types";
+import { ValidationError } from '../errors';
+import { OutputType } from '../types';
 
 /**
  * Validates if the value is greater than or equal to a specific value.
@@ -17,20 +17,16 @@ import { OutputType } from "../types";
  * console.log(errors);
  * // ["The minimum value must be greater than or equal to 10"]
  */
-export function validateIsMin(
-  value: any,
-  min: number,
-  output: OutputType = "record"
-): string[] {
+export function validateIsMin(value: any, min: number, output: OutputType = 'record'): string[] {
   const errors: string[] = [];
 
   if (!value || value === null || value === undefined) {
     return errors;
   }
 
-  if (typeof value === "number" && value < min) {
+  if (typeof value === 'number' && value < min) {
     const errorMessage = `The minimum value must be greater than or equal to ${min}`;
-    if (output === "exception") {
+    if (output === 'exception') {
       throw new ValidationError(errorMessage);
     } else {
       errors.push(errorMessage);

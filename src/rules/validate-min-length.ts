@@ -1,5 +1,5 @@
-import { ValidationError } from "../errors";
-import { OutputType } from "../types";
+import { ValidationError } from '../errors';
+import { OutputType } from '../types';
 
 /**
  * Validates if the value is a string and has a minimum number of characters.
@@ -24,7 +24,7 @@ import { OutputType } from "../types";
 export function validateMinLength(
   value: any,
   minLength: number,
-  output: OutputType = "record"
+  output: OutputType = 'record'
 ): string[] {
   const errors: string[] = [];
 
@@ -32,9 +32,9 @@ export function validateMinLength(
     return errors;
   }
 
-  if (typeof value === "string" && value.trim().length < minLength) {
+  if (typeof value === 'string' && value.trim().length < minLength) {
     const errorMessage = `Must have a minimum of ${minLength} characters`;
-    if (output === "exception") {
+    if (output === 'exception') {
       throw new ValidationError(errorMessage);
     } else {
       errors.push(errorMessage);
@@ -43,7 +43,7 @@ export function validateMinLength(
 
   if (Array.isArray(value) && value.length < minLength) {
     const errorMessage = `Must have a minimum of ${minLength} elements`;
-    if (output === "exception") {
+    if (output === 'exception') {
       throw new ValidationError(errorMessage);
     } else {
       errors.push(errorMessage);

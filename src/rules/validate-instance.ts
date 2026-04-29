@@ -1,5 +1,5 @@
-import { ValidationError } from "../errors";
-import { OutputType } from "../types";
+import { ValidationError } from '../errors';
+import { OutputType } from '../types';
 
 /**
  * Validates if the value is an instance of the class specified by the constructor.
@@ -23,13 +23,13 @@ import { OutputType } from "../types";
 export function validateInstance(
   value: any,
   constructor: new (...args: any[]) => any,
-  output: OutputType = "record"
+  output: OutputType = 'record'
 ): string[] {
   const errors: string[] = [];
 
   if (!(value instanceof constructor)) {
     const errorMessage = `Must be an instance of ${constructor.name}`;
-    if (output === "exception") {
+    if (output === 'exception') {
       throw new ValidationError(errorMessage);
     } else {
       errors.push(errorMessage);

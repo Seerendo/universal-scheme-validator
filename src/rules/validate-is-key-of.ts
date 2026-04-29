@@ -22,9 +22,7 @@ export function validateIsKeyOf<K extends string>(
 
   // Check if the property name exists in the class properties
   if (!classProperties.includes(propertyKey)) {
-    errors.push(
-      `The property '${propertyKey}' is not a valid key of class ${classType.name}`
-    );
+    errors.push(`The property '${propertyKey}' is not a valid key of class ${classType.name}`);
   }
 
   return errors;

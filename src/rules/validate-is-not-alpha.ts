@@ -1,5 +1,5 @@
-import { ValidationError } from "../errors";
-import { OutputType } from "../types";
+import { ValidationError } from '../errors';
+import { OutputType } from '../types';
 
 /**
  * Validates if the value is a string that does not contain alphanumeric characters,
@@ -30,7 +30,7 @@ export function validateIsNotAlpha(
         allowPunctuation?: boolean;
       }
     | boolean = false,
-  output: OutputType = "record"
+  output: OutputType = 'record'
 ): string[] {
   const errors: string[] = [];
 
@@ -38,66 +38,61 @@ export function validateIsNotAlpha(
     return errors;
   }
 
-  if (typeof value !== "string") {
+  if (typeof value !== 'string') {
     errors.push(`Must be a text string`);
     return errors;
   }
 
-  const allowNumbers =
-    typeof rules === "boolean" ? false : rules.allowNumbers || false;
-  const allowAccents =
-    typeof rules === "boolean" ? false : rules.allowAccents || false;
-  const allowPunctuation =
-    typeof rules === "boolean" ? false : rules.allowPunctuation || false;
+  const allowNumbers = typeof rules === 'boolean' ? false : rules.allowNumbers || false;
+  const allowAccents = typeof rules === 'boolean' ? false : rules.allowAccents || false;
+  const allowPunctuation = typeof rules === 'boolean' ? false : rules.allowPunctuation || false;
 
-  let regexPattern = "A-Za-z"; // Only basic letters
+  let regexPattern = 'A-Za-z'; // Only basic letters
 
   if (allowAccents) {
-    regexPattern += "áéíóúÁÉÍÓÚñÑüÜ"; // Add accents and special spanish characters
+    regexPattern += 'áéíóúÁÉÍÓÚñÑüÜ'; // Add accents and special spanish characters
   }
   if (allowNumbers) {
-    regexPattern += "0-9"; // Add numbers
+    regexPattern += '0-9'; // Add numbers
   }
   if (allowPunctuation) {
     regexPattern += `.,;:!?()\\[\\]{}'"-`; // Add punctuation marks
   }
 
   // Always include spaces
-  regexPattern += "\\s";
+  regexPattern += '\\s';
 
   // Create the dynamic regular expression
   const regex = new RegExp(`^[${regexPattern}]+$`);
 
   if (!regex.test(value)) {
-    let errorMessage =
-      "Must contain only letters, no alphanumeric values or punctuation marks";
+    let errorMessage = 'Must contain only letters, no alphanumeric values or punctuation marks';
     if (allowNumbers && allowAccents && allowPunctuation) {
-      errorMessage =
-        "Must contain only letters, numbers, accents, punctuation marks, and spaces";
+      errorMessage = 'Must contain only letters, numbers, accents, punctuation marks, and spaces';
     } else if (allowNumbers && allowAccents) {
       errorMessage =
-        "Must contain only letters, numbers, accents, and spaces, no punctuation marks";
+        'Must contain only letters, numbers, accents, and spaces, no punctuation marks';
     } else if (allowNumbers && allowPunctuation) {
       errorMessage =
-        "Must contain only letters, numbers, punctuation marks, and spaces, no accents";
+        'Must contain only letters, numbers, punctuation marks, and spaces, no accents';
     } else if (allowAccents && allowPunctuation) {
       errorMessage =
-        "Must contain only letters, accents, punctuation marks, and spaces, no numbers";
+        'Must contain only letters, accents, punctuation marks, and spaces, no numbers';
     } else if (allowNumbers) {
       errorMessage =
-        "Must contain only letters, numbers, and spaces, no accents or punctuation marks";
+        'Must contain only letters, numbers, and spaces, no accents or punctuation marks';
     } else if (allowAccents) {
       errorMessage =
-        "Must contain only letters, accents, and spaces, no numbers or punctuation marks";
+        'Must contain only letters, accents, and spaces, no numbers or punctuation marks';
     } else if (allowPunctuation) {
       errorMessage =
-        "Must contain only letters, punctuation marks, and spaces, no numbers or accents";
+        'Must contain only letters, punctuation marks, and spaces, no numbers or accents';
     }
     errors.push(errorMessage);
   }
 
-  if (output === "exception" && errors.length > 0) {
-    throw new ValidationError(errors.join("\n"));
+  if (output === 'exception' && errors.length > 0) {
+    throw new ValidationError(errors.join('\n'));
   }
 
   return errors;

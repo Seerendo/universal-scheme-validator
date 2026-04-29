@@ -1,5 +1,5 @@
-import { ValidationError } from "../errors";
-import { OutputType } from "../types";
+import { ValidationError } from '../errors';
+import { OutputType } from '../types';
 
 /**
  * Validates if the value is equal to another value.
@@ -17,11 +17,7 @@ import { OutputType } from "../types";
  * console.log(errors);
  * // ["The value must be equal to 10"]
  */
-export function validateIsEqualTo(
-  value: any,
-  to: any,
-  output: OutputType = "record"
-): string[] {
+export function validateIsEqualTo(value: any, to: any, output: OutputType = 'record'): string[] {
   const errors: string[] = [];
 
   if (!value || value === null || value === undefined) {
@@ -30,7 +26,7 @@ export function validateIsEqualTo(
 
   if (to && value !== to) {
     const errorMessage = `The value must be equal to ${to}`;
-    if (output === "exception") {
+    if (output === 'exception') {
       throw new ValidationError(errorMessage);
     } else {
       errors.push(errorMessage);

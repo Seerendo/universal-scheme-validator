@@ -1,5 +1,5 @@
-import { ValidationError } from "../errors";
-import { OutputType } from "../types";
+import { ValidationError } from '../errors';
+import { OutputType } from '../types';
 
 /**
  * Validates if the value is NOT found in a blacklist of forbidden values.
@@ -27,7 +27,7 @@ import { OutputType } from "../types";
 export function validateBlackList(
   value: any,
   blackList: any[],
-  output: OutputType = "record"
+  output: OutputType = 'record'
 ): string[] {
   const errors: string[] = [];
 
@@ -37,7 +37,7 @@ export function validateBlackList(
 
   // If the value is a string, compare in lowercase for case-insensitive
   const isBlackListed = blackList.some((item) => {
-    if (typeof value === "string" && typeof item === "string") {
+    if (typeof value === 'string' && typeof item === 'string') {
       return value.toLowerCase() === item.toLowerCase();
     }
     return value === item;
@@ -45,7 +45,7 @@ export function validateBlackList(
 
   if (isBlackListed) {
     const errorMessage = `The value '${value}' is not allowed`;
-    if (output === "exception") {
+    if (output === 'exception') {
       throw new ValidationError(errorMessage);
     } else {
       errors.push(errorMessage);

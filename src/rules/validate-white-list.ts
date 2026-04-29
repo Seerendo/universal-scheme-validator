@@ -1,5 +1,5 @@
-import { ValidationError } from "../errors";
-import { OutputType } from "../types";
+import { ValidationError } from '../errors';
+import { OutputType } from '../types';
 
 /**
  * Validates if the value is found in a white list of allowed values.
@@ -24,7 +24,7 @@ import { OutputType } from "../types";
 export function validateWhiteList(
   value: any,
   list: any[],
-  output: OutputType = "record"
+  output: OutputType = 'record'
 ): string[] {
   const errors: string[] = [];
 
@@ -32,15 +32,15 @@ export function validateWhiteList(
     return errors;
   }
 
-  if (typeof value === "string" && list.length > 0) {
+  if (typeof value === 'string' && list.length > 0) {
     const newList = list.map((item) => item.toLowerCase());
-    const tokens = value.split(" ").map((item) => {
+    const tokens = value.split(' ').map((item) => {
       return item.trim().toLowerCase();
     });
 
     if (!newList.find(tokens.includes.bind(tokens))) {
       const errorMessage = `The value must be in the white list: [${list}]`;
-      if (output === "exception") {
+      if (output === 'exception') {
         throw new ValidationError(errorMessage);
       } else {
         errors.push(errorMessage);
@@ -49,11 +49,11 @@ export function validateWhiteList(
     }
   }
 
-  if (typeof value === "number" && list.length > 0) {
+  if (typeof value === 'number' && list.length > 0) {
     list.forEach((item) => {
-      if (typeof item !== "number") {
+      if (typeof item !== 'number') {
         const errorMessage = `The elements of the white list must be of type [number]`;
-        if (output === "exception") {
+        if (output === 'exception') {
           throw new ValidationError(errorMessage);
         } else {
           errors.push(errorMessage);
@@ -64,7 +64,7 @@ export function validateWhiteList(
 
     if (!list.find((item) => item === value)) {
       const errorMessage = `The value must be in the white list: [${list}]`;
-      if (output === "exception") {
+      if (output === 'exception') {
         throw new ValidationError(errorMessage);
       } else {
         errors.push(errorMessage);

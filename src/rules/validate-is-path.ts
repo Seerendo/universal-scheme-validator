@@ -1,5 +1,5 @@
-import { ValidationError } from "../errors";
-import { OutputType, PathValidationOptions } from "../types";
+import { ValidationError } from '../errors';
+import { OutputType, PathValidationOptions } from '../types';
 
 /**
  * Validates if the value is a valid path, either a direct route (like `/module/function`)
@@ -44,18 +44,18 @@ import { OutputType, PathValidationOptions } from "../types";
 export function validateIsPath(
   value: any,
   options: PathValidationOptions = {},
-  output: OutputType = "record"
+  output: OutputType = 'record'
 ): string[] {
   const errors: string[] = [];
 
-  if (!value || typeof value !== "string") {
-    const msg = "The path must be a string";
-    if (output === "exception") throw new ValidationError(msg);
+  if (!value || typeof value !== 'string') {
+    const msg = 'The path must be a string';
+    if (output === 'exception') throw new ValidationError(msg);
     return [msg];
   }
 
   let path = value;
-  let query = "";
+  let query = '';
 
   try {
     // If a full URL is passed, we extract only the pathname and query
@@ -64,35 +64,35 @@ export function validateIsPath(
       path = parsed.pathname;
       query = parsed.search;
     } else {
-      const [maybePath, maybeQuery] = value.split("?");
-      path = maybePath || "";
-      query = maybeQuery ? `?${maybeQuery}` : "";
+      const [maybePath, maybeQuery] = value.split('?');
+      path = maybePath || '';
+      query = maybeQuery ? `?${maybeQuery}` : '';
     }
   } catch {
-    errors.push("Failed to parse the path");
-    if (output === "exception") throw new ValidationError(errors.join("\n"));
+    errors.push('Failed to parse the path');
+    if (output === 'exception') throw new ValidationError(errors.join('\n'));
     return errors;
   }
 
   // Specific validations
-  if (options.noSpaces && path.includes(" ")) {
-    errors.push("The path must not contain spaces");
+  if (options.noSpaces && path.includes(' ')) {
+    errors.push('The path must not contain spaces');
   }
 
-  if (options.noTrailingSlash && path.endsWith("/") && path !== "/") {
+  if (options.noTrailingSlash && path.endsWith('/') && path !== '/') {
     errors.push("The path must not end with '/'");
   }
 
-  if (options.notEmpty && (path === "" || path === "/")) {
-    errors.push("The path must not be empty");
+  if (options.notEmpty && (path === '' || path === '/')) {
+    errors.push('The path must not be empty');
   }
 
-  if (options.noQuery && query !== "") {
-    errors.push("Query parameters are not allowed in the URL path");
+  if (options.noQuery && query !== '') {
+    errors.push('Query parameters are not allowed in the URL path');
   }
 
-  if (output === "exception" && errors.length > 0) {
-    throw new ValidationError(errors.join("\n"));
+  if (output === 'exception' && errors.length > 0) {
+    throw new ValidationError(errors.join('\n'));
   }
 
   return errors;

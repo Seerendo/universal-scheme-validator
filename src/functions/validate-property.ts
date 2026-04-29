@@ -21,8 +21,8 @@ import {
   validateIsType,
   validateIsArray,
   validateIsPath,
-} from "../rules";
-import { ValidationRule } from "../interfaces/validation-rule";
+} from '../rules';
+import { ValidationRule } from '../interfaces/validation-rule';
 
 /**
  * Validates a property of an object according to the specified validation rules.
@@ -75,10 +75,7 @@ import { ValidationRule } from "../interfaces/validation-rule";
  * console.log(errors);
  * // ["The value of the property 'age' must be a number", "The value of the property 'website' must be a URL"]
  */
-export function validateProperty<T>(
-  value: any,
-  rules: ValidationRule<T>
-): string[] {
+export function validateProperty<T>(value: any, rules: ValidationRule<T>): string[] {
   const propertyErrors: string[] = [];
 
   // Validation of maxLength

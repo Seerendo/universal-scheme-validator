@@ -1,5 +1,5 @@
-import { ValidationError } from "../errors";
-import { OutputType } from "../types";
+import { ValidationError } from '../errors';
+import { OutputType } from '../types';
 
 /**
  * Validates if the provided value is an object.
@@ -27,7 +27,7 @@ import { OutputType } from "../types";
 export function validateIsObject(
   value: any,
   rules: { allowEmpty?: boolean; allowArrays?: boolean } | boolean = false,
-  output: OutputType = "record"
+  output: OutputType = 'record'
 ): string[] {
   const errors: string[] = [];
 
@@ -36,9 +36,9 @@ export function validateIsObject(
   }
 
   // If it's not an object, add error
-  if (typeof value !== "object" || value === null) {
-    const errorMessage = "Must be an object";
-    if (output === "exception") {
+  if (typeof value !== 'object' || value === null) {
+    const errorMessage = 'Must be an object';
+    if (output === 'exception') {
       throw new ValidationError(errorMessage);
     } else {
       errors.push(errorMessage);
@@ -46,14 +46,12 @@ export function validateIsObject(
     }
   }
 
-  const allowEmpty =
-    typeof rules === "boolean" ? false : rules.allowEmpty || false;
-  const allowArrays =
-    typeof rules === "boolean" ? false : rules.allowArrays || false;
+  const allowEmpty = typeof rules === 'boolean' ? false : rules.allowEmpty || false;
+  const allowArrays = typeof rules === 'boolean' ? false : rules.allowArrays || false;
 
   // Verify if the value is an array and if it's allowed
   if (Array.isArray(value) && !allowArrays) {
-    errors.push("Arrays are not allowed, only objects");
+    errors.push('Arrays are not allowed, only objects');
     return errors;
   }
 
@@ -68,8 +66,8 @@ export function validateIsObject(
     }
   }
 
-  if (output === "exception" && errors.length > 0) {
-    throw new ValidationError(errors.join(", "));
+  if (output === 'exception' && errors.length > 0) {
+    throw new ValidationError(errors.join(', '));
   }
 
   return errors;

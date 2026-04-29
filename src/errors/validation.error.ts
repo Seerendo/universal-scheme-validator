@@ -17,8 +17,8 @@ export class ValidationError extends Error {
    * console.log(error.errors): string; // 'The email is required'
    */
   constructor(errors: Record<string, string[]> | string[] | string) {
-    super("Validation Error");
-    this.name = "ValidationError";
+    super('Validation Error');
+    this.name = 'ValidationError';
     this.errors = errors;
   }
 }

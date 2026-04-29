@@ -1,5 +1,5 @@
-import { ValidationError } from "../errors";
-import { OutputType, PrimitiveType } from "../types";
+import { ValidationError } from '../errors';
+import { OutputType, PrimitiveType } from '../types';
 
 /**
  * Validates if the value is an array and if its elements are of the specified type.
@@ -24,7 +24,7 @@ import { OutputType, PrimitiveType } from "../types";
 export function validateIsArray(
   value: any[],
   rules: { type?: PrimitiveType; strict?: boolean } | boolean = false,
-  output: OutputType = "record"
+  output: OutputType = 'record'
 ): string[] {
   const errors: string[] = [];
 
@@ -33,8 +33,8 @@ export function validateIsArray(
   }
 
   if (!Array.isArray(value)) {
-    const errorMessage = "Must be an array";
-    if (output === "exception") {
+    const errorMessage = 'Must be an array';
+    if (output === 'exception') {
       throw new ValidationError(errorMessage);
     } else {
       errors.push(errorMessage);
@@ -42,7 +42,7 @@ export function validateIsArray(
     }
   }
 
-  if (typeof rules === "object" && rules.type) {
+  if (typeof rules === 'object' && rules.type) {
     let index = 0;
     value.forEach((item) => {
       index++;
@@ -50,7 +50,7 @@ export function validateIsArray(
         const errorMessage = `The element at index [${index}] of the array must be of type ${
           rules.type
         }: [${item}] -> ${typeof item}`;
-        if (output === "exception") {
+        if (output === 'exception') {
           throw new ValidationError(errorMessage);
         } else {
           errors.push(errorMessage);
@@ -58,20 +58,20 @@ export function validateIsArray(
       } else {
         const type = typeof item;
         switch (rules.type) {
-          case "number":
+          case 'number':
             if (isNaN(Number(item))) {
               const errorMessage = `The element at index [${index}] of the array must be of type number: [${item}] -> ${type}`;
-              if (output === "exception") {
+              if (output === 'exception') {
                 throw new ValidationError(errorMessage);
               } else {
                 errors.push(errorMessage);
               }
             }
             break;
-          case "string":
-            if (typeof item !== "string") {
+          case 'string':
+            if (typeof item !== 'string') {
               const errorMessage = `The element at index [${index}] of the array must be of type string: [${item}] -> ${type}`;
-              if (output === "exception") {
+              if (output === 'exception') {
                 throw new ValidationError(errorMessage);
               } else {
                 errors.push(errorMessage);

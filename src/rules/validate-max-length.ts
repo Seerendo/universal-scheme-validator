@@ -1,5 +1,5 @@
-import { ValidationError } from "../errors";
-import { OutputType } from "../types";
+import { ValidationError } from '../errors';
+import { OutputType } from '../types';
 
 /**
  * Validates if the value of a string does not exceed a specified maximum length.
@@ -25,7 +25,7 @@ import { OutputType } from "../types";
 export function validateMaxLength(
   value: any,
   maxLength: number,
-  output: OutputType = "record"
+  output: OutputType = 'record'
 ): string[] {
   const errors: string[] = [];
 
@@ -33,9 +33,9 @@ export function validateMaxLength(
     return errors;
   }
 
-  if (typeof value === "string" && value.trim().length > maxLength) {
+  if (typeof value === 'string' && value.trim().length > maxLength) {
     const errorMessage = `Cannot exceed ${maxLength} characters`;
-    if (output === "exception") {
+    if (output === 'exception') {
       throw new ValidationError(errorMessage);
     } else {
       errors.push(errorMessage);
@@ -44,7 +44,7 @@ export function validateMaxLength(
 
   if (Array.isArray(value) && value.length > maxLength) {
     const errorMessage = `Cannot exceed ${maxLength} elements`;
-    if (output === "exception") {
+    if (output === 'exception') {
       throw new ValidationError(errorMessage);
     } else {
       errors.push(errorMessage);

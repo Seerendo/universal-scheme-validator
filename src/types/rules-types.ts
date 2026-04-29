@@ -1,19 +1,19 @@
-import { ValidationRule } from "../interfaces";
+import { ValidationRule } from '../interfaces';
 
 /**
  * Specify the type of number expected.
  */
-export type NumberSchema = "integer" | "float" | "bigint";
+export type NumberSchema = 'integer' | 'float' | 'bigint';
 
 /**
  * Defines the validation output type.
  */
-export type OutputType = "exception" | "record";
+export type OutputType = 'exception' | 'record';
 
 /**
  * Defines the primitive data type the value must belong to.
  */
-export type PrimitiveType = "string" | "number" | "boolean";
+export type PrimitiveType = 'string' | 'number' | 'boolean';
 
 /**
  * Defines the validation options for paths.

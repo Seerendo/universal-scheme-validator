@@ -1,5 +1,5 @@
-import { ValidationError } from "../errors";
-import { OutputType } from "../types";
+import { ValidationError } from '../errors';
+import { OutputType } from '../types';
 
 /**
  * Validates if the value is not empty.
@@ -12,15 +12,12 @@ import { OutputType } from "../types";
  * @returns An array of strings representing the validation errors,
  *          if the value is an empty string.
  */
-export function validateIsNotEmpty(
-  value: any,
-  output: OutputType = "record"
-): string[] {
+export function validateIsNotEmpty(value: any, output: OutputType = 'record'): string[] {
   const errors: string[] = [];
 
-  if (typeof value === "string" && value.trim().length === 0) {
-    const errorMessage = "Cannot be an empty string";
-    if (output === "exception") {
+  if (typeof value === 'string' && value.trim().length === 0) {
+    const errorMessage = 'Cannot be an empty string';
+    if (output === 'exception') {
       throw new ValidationError(errorMessage);
     } else {
       errors.push(errorMessage);
@@ -28,8 +25,8 @@ export function validateIsNotEmpty(
   }
 
   if (Array.isArray(value) && value.length === 0) {
-    const errorMessage = "Cannot be an empty array";
-    if (output === "exception") {
+    const errorMessage = 'Cannot be an empty array';
+    if (output === 'exception') {
       throw new ValidationError(errorMessage);
     } else {
       errors.push(errorMessage);

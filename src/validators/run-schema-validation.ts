@@ -1,8 +1,8 @@
-import { validateNestedSchema } from "../rules";
-import { validateProperty } from "../functions/validate-property";
-import { ValidationError } from "../errors";
-import { OutputType } from "../types";
-import { ValidationSchema } from "../interfaces";
+import { validateNestedSchema } from '../rules';
+import { validateProperty } from '../functions/validate-property';
+import { ValidationError } from '../errors';
+import { OutputType } from '../types';
+import { ValidationSchema } from '../interfaces';
 
 /**
  * Validates a Schema according to the specified validation guidelines
@@ -95,10 +95,10 @@ export function runSchemaValidation<T>(
   schema: ValidationSchema<T>,
   options: { strict?: boolean; output?: OutputType } = {
     strict: false,
-    output: "exception",
-  },
+    output: 'exception',
+  }
 ): void | Record<string, any> {
-  const { strict = false, output = "exception" } = options;
+  const { strict = false, output = 'exception' } = options;
 
   // If it is an array, we validate each one separately
   if (Array.isArray(instance)) {
@@ -108,7 +108,7 @@ export function runSchemaValidation<T>(
       try {
         const errors = runSchemaValidation(item, schema, {
           strict,
-          output: "record",
+          output: 'record',
         });
         if (errors && Object.keys(errors).length > 0) {
           allErrors[index] = errors;
@@ -119,7 +119,7 @@ export function runSchemaValidation<T>(
     });
 
     if (Object.keys(allErrors).length > 0) {
-      if (output === "exception") {
+      if (output === 'exception') {
         throw new ValidationError(allErrors);
       } else {
         return allErrors;
@@ -135,14 +135,10 @@ export function runSchemaValidation<T>(
   const schemaKeys = Object.keys(schema);
 
   if (strict) {
-    const extraProperties = instanceKeys.filter(
-      (key) => !schemaKeys.includes(key),
-    );
+    const extraProperties = instanceKeys.filter((key) => !schemaKeys.includes(key));
 
     if (extraProperties.length > 0) {
-      errors["_strict"] = [
-        `Properties not present in the schema: ${extraProperties.join(", ")}`,
-      ];
+      errors['_strict'] = [`Properties not present in the schema: ${extraProperties.join(', ')}`];
     }
   }
 
@@ -161,11 +157,10 @@ export function runSchemaValidation<T>(
     }
 
     if (rules?.nestedSchema) {
-      const nestedErrors = validateNestedSchema(
-        value ?? {},
-        rules.nestedSchema,
-        { strict, output: "record" },
-      );
+      const nestedErrors = validateNestedSchema(value ?? {}, rules.nestedSchema, {
+        strict,
+        output: 'record',
+      });
 
       if (Object.keys(nestedErrors).length > 0) {
         errors[property] = nestedErrors;
@@ -181,7 +176,7 @@ export function runSchemaValidation<T>(
   }
 
   if (Object.keys(errors).length > 0) {
-    if (output === "exception") {
+    if (output === 'exception') {
       throw new ValidationError(errors);
     } else {
       return errors;

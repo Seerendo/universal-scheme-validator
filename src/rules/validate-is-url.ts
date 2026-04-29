@@ -1,5 +1,5 @@
-import { ValidationError } from "../errors";
-import { OutputType } from "../types";
+import { ValidationError } from '../errors';
+import { OutputType } from '../types';
 
 /**
  * Validates if the value is a valid URL.
@@ -20,10 +20,7 @@ import { OutputType } from "../types";
  * console.log(errors);
  * // ["The URL does not have a valid structure"]
  */
-export function validateIsUrl(
-  value: any,
-  output: OutputType = "record"
-): string[] {
+export function validateIsUrl(value: any, output: OutputType = 'record'): string[] {
   const errors: string[] = [];
 
   if (!value || value === null || value === undefined) {
@@ -31,9 +28,9 @@ export function validateIsUrl(
   }
 
   // Verify that the value is a string
-  if (typeof value !== "string") {
-    const errorMessage = "Must be a text string";
-    if (output === "exception") {
+  if (typeof value !== 'string') {
+    const errorMessage = 'Must be a text string';
+    if (output === 'exception') {
       throw new ValidationError(errorMessage);
     } else {
       errors.push(errorMessage);
@@ -46,7 +43,7 @@ export function validateIsUrl(
 
   // Verify if the URL exceeds the length limit
   if (value.length > MAX_URL_LENGTH) {
-    errors.push("The URL is too long");
+    errors.push('The URL is too long');
     return errors;
   }
 
@@ -64,21 +61,21 @@ export function validateIsUrl(
   const fullUrlRegex = new RegExp(
     `^${protocolPattern.source}(${domainPattern.source}|${ipPattern.source})` +
       `(${portPattern.source})?${pathPattern.source}${queryPattern.source}${hashPattern.source}$`,
-    "i"
+    'i'
   );
 
   // Validate if the URL has a valid protocol
   if (!protocolPattern.test(value)) {
-    errors.push("The URL must start with http://, https://, or ftp://");
+    errors.push('The URL must start with http://, https://, or ftp://');
   }
 
   // Validate the full URL structure
   if (!fullUrlRegex.test(value)) {
-    errors.push("The URL does not have a valid structure");
+    errors.push('The URL does not have a valid structure');
   }
 
-  if (output === "exception" && errors.length > 0) {
-    throw new ValidationError(errors.join("\n"));
+  if (output === 'exception' && errors.length > 0) {
+    throw new ValidationError(errors.join('\n'));
   }
 
   return errors;

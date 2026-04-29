@@ -1,5 +1,5 @@
-import { ValidationError } from "../errors";
-import { OutputType } from "../types";
+import { ValidationError } from '../errors';
+import { OutputType } from '../types';
 
 /**
  * Validates if at least one of the values from the "values" array exists in the "contains" array.
@@ -13,7 +13,7 @@ import { OutputType } from "../types";
 export function validateContainsValue(
   values: any,
   contains: any[],
-  output: OutputType = "record"
+  output: OutputType = 'record'
 ): string[] {
   const errors: string[] = [];
 
@@ -25,19 +25,15 @@ export function validateContainsValue(
   if (Array.isArray(values)) {
     const invalidItems = values.filter((item) => !contains.includes(item));
     if (invalidItems.length > 0) {
-      const errorMessage = `The array contains invalid values: ${JSON.stringify(
-        invalidItems
-      )}`;
-      if (output === "exception") throw new ValidationError(errorMessage);
+      const errorMessage = `The array contains invalid values: ${JSON.stringify(invalidItems)}`;
+      if (output === 'exception') throw new ValidationError(errorMessage);
       else errors.push(errorMessage);
     }
     // If values is a string or number
-  } else if (typeof values === "string" || typeof values === "number") {
+  } else if (typeof values === 'string' || typeof values === 'number') {
     if (!contains.includes(values)) {
-      const errorMessage = `The value must be in the allowed list: ${JSON.stringify(
-        contains
-      )}`;
-      if (output === "exception") throw new ValidationError(errorMessage);
+      const errorMessage = `The value must be in the allowed list: ${JSON.stringify(contains)}`;
+      if (output === 'exception') throw new ValidationError(errorMessage);
       else errors.push(errorMessage);
     }
   }

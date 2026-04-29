@@ -1,5 +1,5 @@
-import { ValidationError } from "../errors";
-import { OutputType } from "../types";
+import { ValidationError } from '../errors';
+import { OutputType } from '../types';
 
 /**
  * Validates if the value is a text string.
@@ -18,19 +18,16 @@ import { OutputType } from "../types";
  * const errors = validateIsString("Hello World");
  * console.log(errors); // []
  */
-export function validateIsString(
-  value: any,
-  output: OutputType = "record"
-): string[] {
+export function validateIsString(value: any, output: OutputType = 'record'): string[] {
   const errors: string[] = [];
 
   if (value === null || value === undefined) {
     return errors;
   }
 
-  if (typeof value !== "string") {
+  if (typeof value !== 'string') {
     const errorMessage = `Must be a text string`;
-    if (output === "exception") {
+    if (output === 'exception') {
       throw new ValidationError(errorMessage);
     } else {
       errors.push(errorMessage);

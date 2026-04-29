@@ -1,5 +1,5 @@
-import { ValidationError } from "../errors";
-import { OutputType } from "../types";
+import { ValidationError } from '../errors';
+import { OutputType } from '../types';
 
 /**
  * Validates if the provided value is required.
@@ -16,19 +16,16 @@ import { OutputType } from "../types";
  * console.log(errors);
  * // ["Is a required value"]
  */
-export function validateIsRequired(
-  value: any,
-  output: OutputType = "record"
-): string[] {
+export function validateIsRequired(value: any, output: OutputType = 'record'): string[] {
   const errors: string[] = [];
 
   if (
-    (typeof value === "string" && value.trim().length === 0) ||
+    (typeof value === 'string' && value.trim().length === 0) ||
     value === null ||
     value === undefined
   ) {
     const errorMessage = `Is a required value`;
-    if (output === "exception") {
+    if (output === 'exception') {
       throw new ValidationError(errorMessage);
     } else {
       errors.push(errorMessage);

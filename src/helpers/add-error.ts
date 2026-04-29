@@ -1,5 +1,5 @@
-import { ValidationError } from "../errors";
-import { OutputType } from "../types";
+import { ValidationError } from '../errors';
+import { OutputType } from '../types';
 
 /**
  * Helper to add a validation error to the array or throw an exception,
@@ -17,12 +17,8 @@ import { OutputType } from "../types";
  * addError(errors, "Required field", "exception");
  * // Throws ValidationError
  */
-export function addError(
-  errors: string[],
-  message: string,
-  output: OutputType
-): void {
-  if (output === "exception") {
+export function addError(errors: string[], message: string, output: OutputType): void {
+  if (output === 'exception') {
     throw new ValidationError(message);
   }
   errors.push(message);

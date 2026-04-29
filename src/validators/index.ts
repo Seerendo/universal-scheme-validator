@@ -1,1 +1,1 @@
-export * from "./run-schema-validation";
+export * from './run-schema-validation';

@@ -1,1 +1,1 @@
-export * from "./validate-property";
+export * from './validate-property';

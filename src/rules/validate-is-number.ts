@@ -1,5 +1,5 @@
-import { ValidationError } from "../errors";
-import { NumberSchema, OutputType } from "../types";
+import { ValidationError } from '../errors';
+import { NumberSchema, OutputType } from '../types';
 
 /**
  * Validates if the value is a number.
@@ -31,7 +31,7 @@ import { NumberSchema, OutputType } from "../types";
 export function validateIsNumber(
   value: any,
   rules: { isZero?: boolean; type?: NumberSchema } | boolean,
-  output: OutputType = "record"
+  output: OutputType = 'record'
 ): string[] {
   const errors: string[] = [];
 
@@ -39,9 +39,9 @@ export function validateIsNumber(
     return errors;
   }
 
-  if (typeof value !== "number" && typeof value !== "bigint") {
-    const errorMessage = "Must be a number";
-    if (output === "exception") {
+  if (typeof value !== 'number' && typeof value !== 'bigint') {
+    const errorMessage = 'Must be a number';
+    if (output === 'exception') {
       throw new ValidationError(errorMessage);
     } else {
       errors.push(errorMessage);
@@ -49,30 +49,30 @@ export function validateIsNumber(
     }
   }
 
-  if (typeof rules === "object") {
+  if (typeof rules === 'object') {
     const { isZero: allowZero, type } = rules;
 
-    if (!allowZero && (value === 0)) {
+    if (!allowZero && value === 0) {
       errors.push(`Cannot be zero`);
     }
 
     if (type) {
-      if (type === "integer" && !Number.isInteger(value)) {
+      if (type === 'integer' && !Number.isInteger(value)) {
         errors.push(`Must be an integer`);
       }
 
-      if (type === "float" && Number.isInteger(value)) {
+      if (type === 'float' && Number.isInteger(value)) {
         errors.push(`Must be a float number`);
       }
 
-      if (type === "bigint" && typeof value !== "bigint") {
+      if (type === 'bigint' && typeof value !== 'bigint') {
         errors.push(`Must be a BigInt`);
       }
     }
   }
 
-  if (output === "exception" && errors.length > 0) {
-    throw new ValidationError(errors.join("\n"));
+  if (output === 'exception' && errors.length > 0) {
+    throw new ValidationError(errors.join('\n'));
   }
 
   return errors;

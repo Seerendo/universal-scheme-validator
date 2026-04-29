@@ -1,5 +1,5 @@
-import { ValidationError } from "../errors";
-import { OutputType, PrimitiveType } from "../types";
+import { ValidationError } from '../errors';
+import { OutputType, PrimitiveType } from '../types';
 
 /**
  * Validates if the provided value is of the specified type.
@@ -22,11 +22,7 @@ import { OutputType, PrimitiveType } from "../types";
  * // ["Must be a primitive text string, the specified type is: string"]
  */
 
-export function validateIsType(
-  value: any,
-  type: PrimitiveType,
-  output: OutputType = "record"
-) {
+export function validateIsType(value: any, type: PrimitiveType, output: OutputType = 'record') {
   const errors: string[] = [];
 
   if (!value || value === null || value === undefined) {
@@ -34,32 +30,21 @@ export function validateIsType(
   }
 
   switch (type) {
-    case "string":
-      if (typeof value !== "string") {
-        errors.push(
-          `Must be a primitive text string, the specified type is: ${type}`
-        );
+    case 'string':
+      if (typeof value !== 'string') {
+        errors.push(`Must be a primitive text string, the specified type is: ${type}`);
       }
       break;
-    case "number":
+    case 'number':
       if (isNaN(Number(value))) {
-        errors.push(
-          `Must be a primitive number, the specified type is: ${type}`
-        );
+        errors.push(`Must be a primitive number, the specified type is: ${type}`);
       }
       break;
-    case "boolean":
-      if (typeof value !== "boolean") {
+    case 'boolean':
+      if (typeof value !== 'boolean') {
         if (isNaN(Number(value))) {
-          if (
-            !(
-              typeof value === "string" &&
-              (value === "true" || value === "false")
-            )
-          ) {
-            errors.push(
-              `Must be a primitive boolean value, the specified type is: ${type}`
-            );
+          if (!(typeof value === 'string' && (value === 'true' || value === 'false'))) {
+            errors.push(`Must be a primitive boolean value, the specified type is: ${type}`);
           }
         }
       }
@@ -68,8 +53,8 @@ export function validateIsType(
       break;
   }
 
-  if (output === "exception" && errors.length > 0) {
-    throw new ValidationError(errors.join("\n"));
+  if (output === 'exception' && errors.length > 0) {
+    throw new ValidationError(errors.join('\n'));
   }
 
   return errors;

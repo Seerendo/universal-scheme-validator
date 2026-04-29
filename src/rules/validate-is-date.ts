@@ -1,5 +1,5 @@
-import { ValidationError } from "../errors";
-import { OutputType } from "../types";
+import { ValidationError } from '../errors';
+import { OutputType } from '../types';
 
 /**
  * Validates if the value is a valid date.
@@ -29,7 +29,7 @@ import { OutputType } from "../types";
 export function validateIsDate(
   value: any,
   rules: { formatDate?: string } | boolean = false,
-  output: OutputType = "record"
+  output: OutputType = 'record'
 ): string[] {
   const errors: string[] = [];
 
@@ -39,13 +39,13 @@ export function validateIsDate(
 
   // If no rules are passed, an empty array is returned
   if (rules === false) {
-    if (output === "record") {
+    if (output === 'record') {
       return errors;
     }
   }
 
   const isDateInstance = value instanceof Date;
-  const isDateString = typeof value === "string" && !isNaN(Date.parse(value));
+  const isDateString = typeof value === 'string' && !isNaN(Date.parse(value));
 
   // Verify that the value is a valid date
   if (!isDateInstance && !isDateString) {
@@ -53,7 +53,7 @@ export function validateIsDate(
   }
 
   // If there's a date format, we validate it
-  if (typeof rules === "object" && rules.formatDate) {
+  if (typeof rules === 'object' && rules.formatDate) {
     const date = isDateInstance ? value : new Date(value);
     const formattedDate = formatDate(date, rules.formatDate);
 
@@ -64,8 +64,8 @@ export function validateIsDate(
 
   // Depending on the output type, we handle the response
   if (errors.length > 0) {
-    if (output === "exception") {
-      throw new ValidationError(errors.join("\n")); // Throws an exception if output is "exception"
+    if (output === 'exception') {
+      throw new ValidationError(errors.join('\n')); // Throws an exception if output is "exception"
     }
   }
 
@@ -75,17 +75,17 @@ export function validateIsDate(
 function formatDate(date: Date, format: string): string | null {
   try {
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
 
     switch (format) {
-      case "YYYY-MM-DD":
+      case 'YYYY-MM-DD':
         return `${year}-${month}-${day}`;
-      case "DD/MM/YYYY":
+      case 'DD/MM/YYYY':
         return `${day}/${month}/${year}`;
-      case "MM/DD/YYYY":
+      case 'MM/DD/YYYY':
         return `${month}/${day}/${year}`;
-      case "DD-MM-YYYY":
+      case 'DD-MM-YYYY':
         return `${day}-${month}-${year}`;
       default:
         return null;

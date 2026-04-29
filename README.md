@@ -15,10 +15,7 @@ npm install universal-scheme-validator
 Define your classes or data types, create a validation schema using the `ValidationSchema` interface, and evaluate your instances using the `runSchemaValidation` function.
 
 ```typescript
-import {
-  ValidationSchema,
-  runSchemaValidation,
-} from "universal-scheme-validator";
+import { ValidationSchema, runSchemaValidation } from 'universal-scheme-validator';
 
 class User {
   name!: string;
@@ -46,7 +43,7 @@ const userSchema: ValidationSchema<User> = {
 // 2. Create an instance and test validation
 try {
   const user = new User();
-  user.name = "Ro"; // Minimum length is 3
+  user.name = 'Ro'; // Minimum length is 3
 
   // 3. Execute validation
   // Throws an exception if there are errors by default
@@ -75,7 +72,7 @@ The `runSchemaValidation` function accepts a third parameter for configuration o
 ```typescript
 // Returns errors without throwing an exception and validates in strict mode
 const errores = runSchemaValidation(user, userSchema, {
-  output: "record",
+  output: 'record',
   strict: true,
 });
 ```
@@ -94,7 +91,7 @@ const schemaComplejo: ValidationSchema = {
     },
   },
   etiquetas: {
-    isArray: { type: "string" },
+    isArray: { type: 'string' },
     isRequired: true,
   },
 };
@@ -148,7 +145,7 @@ The following validation rules are available through the `ValidationRule` interf
 By default, if a validation fails, the library will throw an instance of `ValidationError` which can be accessed from `@catch`.
 
 ```typescript
-import { ValidationError } from "universal-scheme-validator";
+import { ValidationError } from 'universal-scheme-validator';
 
 try {
   // ...

@@ -1,6 +1,6 @@
-import { ValidationError } from "../errors";
-import { OutputType, ExpectedStructure } from "../types";
-import { validateExpectedStructure } from "./validate-expected-structure";
+import { ValidationError } from '../errors';
+import { OutputType, ExpectedStructure } from '../types';
+import { validateExpectedStructure } from './validate-expected-structure';
 
 /**
  * Validates if the provided value is a valid JSON.
@@ -24,7 +24,7 @@ import { validateExpectedStructure } from "./validate-expected-structure";
 export function validateIsJSON(
   value: any,
   structure?: { expectedStructure?: ExpectedStructure } | boolean,
-  output: OutputType = "record"
+  output: OutputType = 'record'
 ): string[] {
   const errors: string[] = [];
 
@@ -33,9 +33,9 @@ export function validateIsJSON(
   }
 
   // Verifies if the value is a string
-  if (typeof value !== "string") {
+  if (typeof value !== 'string') {
     const errorMessage = `Must be a text string`;
-    if (output === "exception") {
+    if (output === 'exception') {
       throw new ValidationError(errorMessage);
     } else {
       errors.push(errorMessage);
@@ -49,7 +49,7 @@ export function validateIsJSON(
     parsed = JSON.parse(value);
   } catch (e) {
     const errorMessage = `Must be a valid JSON`;
-    if (output === "exception") {
+    if (output === 'exception') {
       throw new ValidationError(errorMessage);
     } else {
       errors.push(errorMessage);
@@ -58,16 +58,16 @@ export function validateIsJSON(
   }
 
   // Verifies if the value is an object
-  if (structure && typeof structure === "object") {
-    if (structure && typeof structure === "object") {
+  if (structure && typeof structure === 'object') {
+    if (structure && typeof structure === 'object') {
       if (structure.expectedStructure) {
         validateExpectedStructure(parsed, structure.expectedStructure, errors);
       }
     }
   }
 
-  if (errors.length > 0 && output === "exception") {
-    throw new ValidationError(errors.join(", "));
+  if (errors.length > 0 && output === 'exception') {
+    throw new ValidationError(errors.join(', '));
   }
 
   return errors;

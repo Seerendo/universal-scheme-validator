@@ -1,7 +1,7 @@
-import { ValidationError } from "../errors";
-import { ValidationSchema } from "../interfaces";
-import { OutputType } from "../types";
-import { runSchemaValidation } from "../validators/run-schema-validation";
+import { ValidationError } from '../errors';
+import { ValidationSchema } from '../interfaces';
+import { OutputType } from '../types';
+import { runSchemaValidation } from '../validators/run-schema-validation';
 
 /**
  * Validates an object against a validation schema.
@@ -42,8 +42,8 @@ export function validateNestedSchema(
   schema: ValidationSchema,
   options: { strict?: boolean; output?: OutputType } = {
     strict: false,
-    output: "exception",
-  },
+    output: 'exception',
+  }
 ): Record<string, string[]> {
   /**
    * If the value was not provided (optional field not present),
@@ -76,7 +76,7 @@ export function validateNestedSchema(
      */
   }
   try {
-    const { strict = false, output = "exception" } = options;
+    const { strict = false, output = 'exception' } = options;
 
     runSchemaValidation(value, schema, {
       strict: strict,
