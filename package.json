@@ -9,8 +9,7 @@
   ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
-    "dev": "nodemon src/index.ts --exec ts-node --respawn",
-    "prepare": "husky install",
+    "dev": "tsx watch src/index.ts",
     "format": "prettier --write \"src/**/*.ts\"",
     "format:check": "prettier --check \"src/**/*.ts\""
   },
@@ -19,6 +18,7 @@
     "validator",
     "validation",
     "typescript",
+    "schema",
     "validator-scheme",
     "validator-node"
   ],
@@ -26,11 +26,10 @@
   "license": "MIT",
   "description": "Validation schemas for class-based data models",
   "devDependencies": {
-    "husky": "^8.0.0",
-    "lint-staged": "^16.4.0",
-    "prettier": "^3.8.3",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.7.3"
+    "lint-staged": "^17.3.0",
+    "prettier": "^3.9.6",
+    "tsx": "^4.23.12",
+    "typescript": "^7.0.2"
   },
   "lint-staged": {
     "src/**/*.ts": [
