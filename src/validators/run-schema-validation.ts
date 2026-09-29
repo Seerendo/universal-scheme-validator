@@ -105,6 +105,15 @@ export function runSchemaValidation<T>(
     const allErrors: Record<number, any> = {};
 
     instance.forEach((item, index) => {
+      const isValidSchemaTarget = typeof item === 'object' && item !== null && !Array.isArray(item);
+
+      if (!isValidSchemaTarget) {
+        allErrors[index] = {
+          _self: ['Each array element must be an object compatible with the schema'],
+        };
+        return;
+      }
+
       try {
         const errors = runSchemaValidation(item, schema, {
           strict,
