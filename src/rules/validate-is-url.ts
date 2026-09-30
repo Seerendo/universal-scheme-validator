@@ -27,7 +27,6 @@ export function validateIsUrl(value: any, output: OutputType = 'record'): string
     return errors;
   }
 
-  // Verify that the value is a string
   if (typeof value !== 'string') {
     const errorMessage = 'Must be a text string';
     if (output === 'exception') {
@@ -38,16 +37,13 @@ export function validateIsUrl(value: any, output: OutputType = 'record'): string
     }
   }
 
-  // Define the maximum length limit for a URL
   const MAX_URL_LENGTH = 2048;
 
-  // Verify if the URL exceeds the length limit
   if (value.length > MAX_URL_LENGTH) {
     errors.push('The URL is too long');
     return errors;
   }
 
-  // Define the regular expressions
   const protocolPattern = /^(https?|ftp):\/\//i;
   const domainPattern = /([a-z0-9-]+\.)+[a-z]{2,}/i;
   const ipPattern =
@@ -57,19 +53,16 @@ export function validateIsUrl(value: any, output: OutputType = 'record'): string
   const queryPattern = /(\?\S*)?/;
   const hashPattern = /(#\S*)?/;
 
-  // Combined regular expression for full URL validation
   const fullUrlRegex = new RegExp(
     `^${protocolPattern.source}(${domainPattern.source}|${ipPattern.source})` +
       `(${portPattern.source})?${pathPattern.source}${queryPattern.source}${hashPattern.source}$`,
     'i'
   );
 
-  // Validate if the URL has a valid protocol
   if (!protocolPattern.test(value)) {
     errors.push('The URL must start with http://, https://, or ftp://');
   }
 
-  // Validate the full URL structure
   if (!fullUrlRegex.test(value)) {
     errors.push('The URL does not have a valid structure');
   }

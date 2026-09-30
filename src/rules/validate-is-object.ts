@@ -35,7 +35,6 @@ export function validateIsObject(
     return errors;
   }
 
-  // If it's not an object, add error
   if (typeof value !== 'object' || value === null) {
     const errorMessage = 'Must be an object';
     if (output === 'exception') {
@@ -49,13 +48,11 @@ export function validateIsObject(
   const allowEmpty = typeof rules === 'boolean' ? false : rules.allowEmpty || false;
   const allowArrays = typeof rules === 'boolean' ? false : rules.allowArrays || false;
 
-  // Verify if the value is an array and if it's allowed
   if (Array.isArray(value) && !allowArrays) {
     errors.push('Arrays are not allowed, only objects');
     return errors;
   }
 
-  // Verify if the object is empty and if it's allowed
   if (!allowEmpty) {
     if (Array.isArray(value)) {
       value.forEach((item, index) => {

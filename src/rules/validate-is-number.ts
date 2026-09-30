@@ -6,12 +6,12 @@ import { NumberSchema, OutputType } from '../types';
  *
  * @param value The value to validate.
  * @param rules Optionally, an object with properties:
- *              - `isZero`: boolean indicating if the value 0 is allowed.
- *              - `type`: `NumberSchema` object specifying the type of number
- *                        allowed {@link NumberSchema}.
- *                  - `integer`: Indicates that an integer value is allowed.
- *                  - `float`: Indicates that a floating-point value is allowed.
- *                  - `bigint`: Indicates that a bigint value is allowed.
+ *   - `isZero`: boolean indicating if the value 0 is allowed.
+ *   - `type`: `NumberSchema` object specifying the type of number
+ *             allowed {@link NumberSchema}.
+ *     - `integer`: Indicates that an integer value is allowed.
+ *     - `float`: Indicates that a floating-point value is allowed.
+ *     - `bigint`: Indicates that a bigint value is allowed.
  *
  * @param output The expected validation output type, of type {@link OutputType}.
  *  - `record`: Returns an array of strings representing the validation errors.
@@ -30,7 +30,7 @@ import { NumberSchema, OutputType } from '../types';
  */
 export function validateIsNumber(
   value: any,
-  rules: { isZero?: boolean; type?: NumberSchema } | boolean,
+  rules: { isZero?: boolean; type?: NumberSchema } | boolean = true,
   output: OutputType = 'record'
 ): string[] {
   const errors: string[] = [];
@@ -57,16 +57,22 @@ export function validateIsNumber(
     }
 
     if (type) {
-      if (type === 'integer' && !Number.isInteger(value)) {
-        errors.push(`Must be an integer`);
-      }
-
-      if (type === 'float' && Number.isInteger(value)) {
-        errors.push(`Must be a float number`);
-      }
-
-      if (type === 'bigint' && typeof value !== 'bigint') {
-        errors.push(`Must be a BigInt`);
+      switch (type) {
+        case 'integer':
+          if (!Number.isInteger(value)) {
+            errors.push(`Must be an integer`);
+          }
+          break;
+        case 'float':
+          if (Number.isInteger(value)) {
+            errors.push(`Must be a float number`);
+          }
+          break;
+        case 'bigint':
+          if (typeof value !== 'bigint') {
+            errors.push(`Must be a BigInt`);
+          }
+          break;
       }
     }
   }

@@ -58,7 +58,6 @@ export function validateIsPath(
   let query = '';
 
   try {
-    // If a full URL is passed, we extract only the pathname and query
     if (/^https?:\/\//.test(value)) {
       const parsed = new URL(value);
       path = parsed.pathname;
@@ -74,7 +73,6 @@ export function validateIsPath(
     return errors;
   }
 
-  // Specific validations
   if (options.noSpaces && path.includes(' ')) {
     errors.push('The path must not contain spaces');
   }

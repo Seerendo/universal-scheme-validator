@@ -21,6 +21,7 @@ import {
   validateIsType,
   validateIsArray,
   validateIsPath,
+  validateBlackList,
 } from '../rules';
 import { ValidationRule } from '../interfaces/validation-rule';
 
@@ -77,6 +78,11 @@ import { ValidationRule } from '../interfaces/validation-rule';
  */
 export function validateProperty<T>(value: any, rules: ValidationRule<T>): string[] {
   const propertyErrors: string[] = [];
+
+  // Validation of blackList
+  if (rules.blackList !== undefined) {
+    propertyErrors.push(...validateBlackList(value, rules.blackList));
+  }
 
   // Validation of maxLength
   if (rules.maxLength !== undefined) {

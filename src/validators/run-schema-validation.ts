@@ -100,7 +100,6 @@ export function runSchemaValidation<T>(
 ): void | Record<string, any> {
   const { strict = false, output = 'exception' } = options;
 
-  // If it is an array, we validate each one separately
   if (Array.isArray(instance)) {
     const allErrors: Record<number, any> = {};
 
@@ -129,7 +128,6 @@ export function runSchemaValidation<T>(
     return;
   }
 
-  // Original case: single object
   const errors: Record<string, any> = {};
   const instanceKeys = Object.keys(instance as object);
   const schemaKeys = Object.keys(schema);
@@ -142,15 +140,12 @@ export function runSchemaValidation<T>(
     }
   }
 
-  // Validate each property
   for (const property in schema) {
     const rules = schema[property];
     if (!rules) continue;
 
     const value = (instance as any)[property];
 
-    // Validate if the property is required and not present
-    // If the property is not in the object, it is considered not required
     if (rules.isRequired && (value === undefined || value === null)) {
       errors[property] = [`The property '${property}' is required`];
       continue;

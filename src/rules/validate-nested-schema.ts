@@ -45,20 +45,10 @@ export function validateNestedSchema(
     output: 'exception',
   }
 ): Record<string, string[]> {
-  /**
-   * If the value was not provided (optional field not present),
-   * we shouldn't validate the nested schema.
-   */
   if (value === undefined || value === null) {
     return {};
   }
 
-  /**
-   * If the instance exists but doesn't contain any defined properties
-   * from those appearing in the schema (e.g. `new Product()` with uninitialized
-   * `declare` fields), we consider it didn't really "come"
-   * and we do not validate its required fields.
-   */
   try {
     const schemaKeys = Object.keys(schema);
     const hasAnyDefinedField = schemaKeys.some((k) => {
@@ -69,12 +59,7 @@ export function validateNestedSchema(
     if (!hasAnyDefinedField) {
       return {};
     }
-  } catch (err) {
-    /**
-     * If something strange happens while inspecting (e.g. value is not indexable),
-     * we continue with normal validation so as not to hide errors.
-     */
-  }
+  } catch (err) {}
   try {
     const { strict = false, output = 'exception' } = options;
 

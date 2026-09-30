@@ -47,22 +47,20 @@ export function validateIsNotAlpha(
   const allowAccents = typeof rules === 'boolean' ? false : rules.allowAccents || false;
   const allowPunctuation = typeof rules === 'boolean' ? false : rules.allowPunctuation || false;
 
-  let regexPattern = 'A-Za-z'; // Only basic letters
+  let regexPattern = 'A-Za-z';
 
   if (allowAccents) {
-    regexPattern += 'áéíóúÁÉÍÓÚñÑüÜ'; // Add accents and special spanish characters
+    regexPattern += 'áéíóúÁÉÍÓÚñÑüÜ';
   }
   if (allowNumbers) {
-    regexPattern += '0-9'; // Add numbers
+    regexPattern += '0-9';
   }
   if (allowPunctuation) {
-    regexPattern += `.,;:!?()\\[\\]{}'"-`; // Add punctuation marks
+    regexPattern += `.,;:!?()\\[\\]{}'"-`;
   }
 
-  // Always include spaces
   regexPattern += '\\s';
 
-  // Create the dynamic regular expression
   const regex = new RegExp(`^[${regexPattern}]+$`);
 
   if (!regex.test(value)) {
