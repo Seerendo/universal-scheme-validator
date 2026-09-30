@@ -49,17 +49,21 @@ export function validateNestedSchema(
     return {};
   }
 
-  try {
+  if (Array.isArray(value)) {
+    if (value.length === 0) {
+      return {};
+    }
+  } else {
     const schemaKeys = Object.keys(schema);
-    const hasAnyDefinedField = schemaKeys.some((k) => {
-      const v = (value as any)?.[k];
-      return v !== undefined && v !== null;
+    const hasAnyDefinedField = schemaKeys.some((key) => {
+      const fieldValue = (value as any)?.[key];
+      return fieldValue !== undefined && fieldValue !== null;
     });
 
     if (!hasAnyDefinedField) {
       return {};
     }
-  } catch (err) {}
+  }
   try {
     const { strict = false, output = 'exception' } = options;
 
