@@ -249,6 +249,24 @@ export interface ValidationRule<T = any> {
   isRequired?: boolean;
 
   /**
+   * Indicates if the property may be omitted from the validated object.
+   * When set to `false`, an `undefined` value is invalid.
+   * @example
+   * { isOptional: true }
+   * { isOptional: false }
+   */
+  isOptional?: boolean;
+
+  /**
+   * Indicates if the property may explicitly contain `null`.
+   * When set to `false`, a `null` value is invalid.
+   * @example
+   * { isNullable: true }
+   * { isNullable: false }
+   */
+  isNullable?: boolean;
+
+  /**
    * Indicates if the value must be a valid JSON
    * @example
    * { isJSON: true }

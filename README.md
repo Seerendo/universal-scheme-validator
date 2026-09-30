@@ -58,6 +58,54 @@ try {
 }
 ```
 
+### Schema with validation methods
+
+You can create a schema with methods for validating values directly. The original object-based syntax remains supported.
+
+```typescript
+import { defineValidationSchema } from 'universal-scheme-validator';
+
+const userSchema = defineValidationSchema<User>({
+  name: {
+    isRequired: true,
+  },
+});
+
+userSchema.validate(user); // Throws ValidationError when invalid
+const errors = userSchema.safeValidate(user); // Returns a record or undefined
+
+const strictUserSchema = userSchema.withOptions({ strict: true });
+```
+
+The schema can also be the source of the TypeScript type, so a class or interface is not required:
+
+```typescript
+const userSchema = defineValidationSchema({
+  name: {
+    isString: true,
+    isRequired: true,
+  },
+  nickname: {
+    isString: true,
+    isNullable: true,
+  },
+  age: {
+    isNumber: true,
+  },
+});
+
+type User = InferValidationSchema<typeof userSchema>;
+
+const user: User = {
+  name: 'Alice',
+  nickname: null,
+};
+
+userSchema.safeValidate(user);
+```
+
+Properties are optional by default, matching the existing `ValidationSchema` behavior. `isRequired: true` or `isOptional: false` makes a property required, and `isNullable: true` adds `null` to its inferred type. Rules such as `minLength` refine validation but do not narrow a string to a different TypeScript type.
+
 ## Validation Options
 
 The `runSchemaValidation` function accepts a third parameter for configuration options:
@@ -131,9 +179,24 @@ The following validation rules are available through the `ValidationRule` interf
 ### Required and Equality
 
 - **`isRequired: boolean`**: Strict property, throws an error if the value or property is null, undefined, or non-existent in the instance.
+- **`isOptional: boolean`**: Controls whether the property may be omitted. Set it to `false` to reject an `undefined` value. Existing schemas remain optional by default when this option is omitted.
+- **`isNullable: boolean`**: Controls whether the property may explicitly contain `null`. Set it to `false` to reject `null`; set it to `true` to document that `null` is accepted.
 - **`isNotEmpty: boolean`**: The value cannot be empty (works with strings, arrays, objects).
 - **`isEqualTo: any`**: Checks if the input value is strictly equal to the provided value.
 - **`containsValue: any[]`**: Checks if the tested value includes any of the elements from the options array.
+
+`isOptional` and `isNullable` control different cases. A property can be optional and nullable at the same time:
+
+```typescript
+const profileSchema: ValidationSchema = {
+  nickname: {
+    isOptional: true, // The property may be absent
+    isNullable: true, // The property may be null when present
+  },
+};
+```
+
+`isRequired: true` continues to reject both `undefined` and `null`. These options only affect the property when they are explicitly set, preserving the behavior of existing schemas.
 
 ### Classes and Nested Schemas
 

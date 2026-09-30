@@ -1,4 +1,4 @@
-import { validateNestedSchema } from '../rules';
+import { validateIsNullable, validateIsOptional, validateNestedSchema } from '../rules';
 import { validateProperty } from '../functions/validate-property';
 import { ValidationError } from '../errors';
 import { OutputType } from '../types';
@@ -151,8 +151,21 @@ export function runSchemaValidation<T>(
       continue;
     }
 
+    const presenceErrors = [
+      ...validateIsOptional(value, rules.isOptional, 'record', property),
+      ...validateIsNullable(value, rules.isNullable, 'record', property),
+    ];
+    if (presenceErrors.length > 0) {
+      errors[property] = presenceErrors;
+      continue;
+    }
+
+    if (value === undefined || value === null) {
+      continue;
+    }
+
     if (rules?.nestedSchema) {
-      const nestedErrors = validateNestedSchema(value ?? {}, rules.nestedSchema, {
+      const nestedErrors = validateNestedSchema(value, rules.nestedSchema, {
         strict,
         output: 'record',
       });
@@ -162,11 +175,9 @@ export function runSchemaValidation<T>(
       }
     }
 
-    if (value !== undefined && value !== null) {
-      const propertyErrors = validateProperty(value, rules);
-      if (propertyErrors.length > 0) {
-        errors[property] = (errors[property] || []).concat(propertyErrors);
-      }
+    const propertyErrors = validateProperty(value, rules);
+    if (propertyErrors.length > 0) {
+      errors[property] = (errors[property] || []).concat(propertyErrors);
     }
   }
 
