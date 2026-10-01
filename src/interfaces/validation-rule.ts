@@ -1,4 +1,5 @@
 import { ExpectedStructure, NumberSchema, PathValidationOptions, PrimitiveType } from '../types';
+import { RuleMessage, RuleValue } from '../helpers';
 
 /**
  * Interface that defines the validation rules for a specific field.
@@ -25,28 +26,28 @@ export interface ValidationRule<T = any> {
    * @example
    * { blackList: ["admin", "root", "superuser"] }
    */
-  blackList?: any[];
+  blackList?: RuleValue<any[]>;
 
   /**
    * Indicates if the value must contain any of the specified elements.
    * @example
    * { containsValue: ["admin", "user"] }
    */
-  containsValue?: any[];
+  containsValue?: RuleValue<any[]>;
 
   /**
    * Minimum allowed length for a text string.
    * @example
    * { minLength: 5 }
    */
-  minLength?: number;
+  minLength?: RuleValue<number>;
 
   /**
    * Maximum allowed length for a text string.
    * @example
    * { maxLength: 20 }
    */
-  maxLength?: number;
+  maxLength?: RuleValue<number>;
 
   /**
    * Defines if the value must be a number.
@@ -67,22 +68,24 @@ export interface ValidationRule<T = any> {
          * Specifies the type of numeric schema.
          */
         type?: NumberSchema;
+        message?: string;
       }
-    | boolean;
+    | boolean
+    | RuleMessage;
 
   /**
    * Maximum value for a number.
    * @example
    * { isMax: 10 }
    */
-  isMax?: number;
+  isMax?: RuleValue<number>;
 
   /**
    * Minimum value for a number.
    * @example
    * { isMin: 1 }
    */
-  isMin?: number;
+  isMin?: RuleValue<number>;
 
   /**
    * Defines if the value must be equal to the input property.
@@ -90,14 +93,14 @@ export interface ValidationRule<T = any> {
    * { isEqualTo: 5 }
    * { isEqualTo: "Hello World" }
    */
-  isEqualTo?: any;
+  isEqualTo?: RuleValue<any>;
 
   /**
    * Defines if the value must be a text string.
    * @example
    * { isString: true }
    */
-  isString?: boolean;
+  isString?: boolean | RuleMessage;
 
   /**
    * Defines if the value must be an array.
@@ -122,8 +125,10 @@ export interface ValidationRule<T = any> {
          * { isArray: { type: "number", strict: true } }
          */
         strict?: boolean;
+        message?: string;
       }
-    | boolean;
+    | boolean
+    | RuleMessage;
 
   /**
    * Defines if the value must be of a specific type.
@@ -132,21 +137,21 @@ export interface ValidationRule<T = any> {
    * { isType: "number" }
    * { isType: "boolean" }
    */
-  isType?: PrimitiveType;
+  isType?: PrimitiveType | RuleValue<PrimitiveType>;
 
   /**
    * Defines if the value must be a boolean value.
    * @example
    * { isBoolean: true }
    */
-  isBoolean?: boolean;
+  isBoolean?: boolean | RuleMessage;
 
   /**
    * Defines if the value must be a valid email.
    * @example
    * { isEmail: true }
    */
-  isEmail?: boolean;
+  isEmail?: boolean | RuleMessage;
 
   /**
    * Defines if the value must not contain alphanumeric characters.
@@ -176,15 +181,17 @@ export interface ValidationRule<T = any> {
          * { allowPunctuation: true }
          */
         allowPunctuation?: boolean;
+        message?: string;
       }
-    | boolean;
+    | boolean
+    | RuleMessage;
 
   /**
    * Indicates that the value must not be empty.
    * @example
    * { isNotEmpty: true }
    */
-  isNotEmpty?: boolean;
+  isNotEmpty?: boolean | RuleMessage;
 
   /**
    * Indicates if the value must be a date.
@@ -201,8 +208,10 @@ export interface ValidationRule<T = any> {
          * { formatDate: "DD/MM/YYYY" }
          */
         formatDate: string;
+        message?: string;
       }
-    | boolean;
+    | boolean
+    | RuleMessage;
 
   /**
    * Indicates if the value must be a valid UUID.
@@ -221,15 +230,17 @@ export interface ValidationRule<T = any> {
          * { version: 5 }
          */
         version?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
+        message?: string;
       }
-    | boolean;
+    | boolean
+    | RuleMessage;
 
   /**
    * Indicates if the value must be a valid URL.
    * @example
    * { isUrl: true }
    */
-  isUrl?: boolean;
+  isUrl?: boolean | RuleMessage;
 
   /**
    * Indicates if the value must be a valid path, either a direct route (e.g., "/module/feature")
@@ -239,14 +250,14 @@ export interface ValidationRule<T = any> {
    * { isPath: true }
    * { isPath: { noSpaces: true, noTrailingSlash: true, notEmpty: true } }
    */
-  isPath?: PathValidationOptions;
+  isPath?: PathValidationOptions & RuleMessage;
 
   /**
    * Indicates if the value is required
    * @example
    * { isRequired: true }
    */
-  isRequired?: boolean;
+  isRequired?: boolean | RuleMessage;
 
   /**
    * Indicates if the property may be omitted from the validated object.
@@ -255,7 +266,7 @@ export interface ValidationRule<T = any> {
    * { isOptional: true }
    * { isOptional: false }
    */
-  isOptional?: boolean;
+  isOptional?: boolean | RuleMessage;
 
   /**
    * Indicates if the property may explicitly contain `null`.
@@ -264,7 +275,7 @@ export interface ValidationRule<T = any> {
    * { isNullable: true }
    * { isNullable: false }
    */
-  isNullable?: boolean;
+  isNullable?: boolean | RuleMessage;
 
   /**
    * Indicates if the value must be a valid JSON
@@ -279,8 +290,10 @@ export interface ValidationRule<T = any> {
          * { expectedStructure: { key: "string" } }
          */
         expectedStructure?: ExpectedStructure;
+        message?: string;
       }
-    | boolean;
+    | boolean
+    | RuleMessage;
 
   /**
    * Defines if the value must be an object.
@@ -304,15 +317,17 @@ export interface ValidationRule<T = any> {
          * { allowArrays: true }
          */
         allowArrays?: boolean;
+        message?: string;
       }
-    | boolean;
+    | boolean
+    | RuleMessage;
 
   /**
    * Defines if the value must be an instance of a specific class.
    * @example
    * { isInstance: Person }
    */
-  isInstance?: new (...args: any[]) => T;
+  isInstance?: (new (...args: any[]) => T) | RuleValue<new (...args: any[]) => T>;
 
   /**
    * Nested validation schema to validate more complex data structures.
@@ -320,8 +335,8 @@ export interface ValidationRule<T = any> {
    * If T is an object (e.g., User), the schema applies to its properties.
    */
   nestedSchema?: T extends (infer U)[]
-    ? ValidationSchema<U> // If it's an array, schema of elements
-    : ValidationSchema<T>; // If not, schema of the type itself
+    ? RuleValue<ValidationSchema<U>> // If it's an array, schema of elements
+    : RuleValue<ValidationSchema<T>>; // If not, schema of the type itself
 }
 
 /**

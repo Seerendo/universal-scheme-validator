@@ -1,85 +1,69 @@
-# universal-scheme-validator
+# Universal Scheme Validator
 
-Robust and easy-to-use validation schemas for class-based data models in TypeScript.
+<p align="center">
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/Seerendo/universal-scheme-validator" alt="License"></a>
+  <a href="https://github.com/Seerendo/universal-scheme-validator"><img src="https://img.shields.io/badge/coverage-85.83%25-brightgreen" alt="Coverage"></a>
+  <a href="https://www.npmjs.com/package/universal-scheme-validator"><img src="https://img.shields.io/npm/v/universal-scheme-validator" alt="npm version"></a>
+</p>
+
+Runtime validation schemas for TypeScript objects, with inferred types, nested structures, custom messages and class compatibility.
 
 ## Installation
-
-Install the package using npm:
 
 ```bash
 npm install universal-scheme-validator
 ```
 
-## Basic Usage
-
-Define your classes or data types, create a validation schema using the `ValidationSchema` interface, and evaluate your instances using the `runSchemaValidation` function.
+## Quick start
 
 ```typescript
-import { ValidationSchema, runSchemaValidation } from 'universal-scheme-validator';
+import { defineValidationSchema } from 'universal-scheme-validator';
 
-class User {
-  name!: string;
-  email!: string;
-  age?: number;
-}
-
-// 1. Define the validation schema
-const userSchema: ValidationSchema<User> = {
+const userSchema = defineValidationSchema({
   name: {
+    isString: true,
     isRequired: true,
     minLength: 3,
-    maxLength: 50,
   },
   email: {
-    isRequired: true,
+    isString: true,
     isEmail: true,
+    isRequired: true,
   },
   age: {
     isNumber: { isZero: false },
     isMin: 18,
   },
+});
+
+const user = {
+  name: 'Alice',
+  email: 'alice@example.com',
+  age: 30,
 };
 
-// 2. Create an instance and test validation
-try {
-  const user = new User();
-  user.name = 'Ro'; // Minimum length is 3
+userSchema.validate(user);
+```
 
-  // 3. Execute validation
-  // Throws an exception if there are errors by default
-  runSchemaValidation(user, userSchema);
-} catch (error) {
-  console.log(error.errors);
-  // Expected output:
-  // {
-  //   "name": ["The value must be at least 3 characters long"],
-  //   "email": ["The property 'email' is required"]
-  // }
+`validate()` throws a `ValidationError` when the value is invalid. Use `safeValidate()` to receive an error record instead:
+
+```typescript
+const errors = userSchema.safeValidate(user);
+
+if (errors) {
+  console.log(errors);
 }
 ```
 
-### Schema with validation methods
+`safeValidate()` returns `undefined` for a valid value and a record grouped by property for an invalid value.
 
-You can create a schema with methods for validating values directly. The original object-based syntax remains supported.
+## Type inference
 
-```typescript
-import { defineValidationSchema } from 'universal-scheme-validator';
-
-const userSchema = defineValidationSchema<User>({
-  name: {
-    isRequired: true,
-  },
-});
-
-userSchema.validate(user); // Throws ValidationError when invalid
-const errors = userSchema.safeValidate(user); // Returns a record or undefined
-
-const strictUserSchema = userSchema.withOptions({ strict: true });
-```
-
-The schema can also be the source of the TypeScript type, so a class or interface is not required:
+The schema can be the source of the TypeScript type. A class or interface is optional:
 
 ```typescript
+import { defineValidationSchema, InferValidationSchema } from 'universal-scheme-validator';
+
 const userSchema = defineValidationSchema({
   name: {
     isString: true,
@@ -100,121 +84,223 @@ const user: User = {
   name: 'Alice',
   nickname: null,
 };
-
-userSchema.safeValidate(user);
 ```
 
-Properties are optional by default, matching the existing `ValidationSchema` behavior. `isRequired: true` or `isOptional: false` makes a property required, and `isNullable: true` adds `null` to its inferred type. Rules such as `minLength` refine validation but do not narrow a string to a different TypeScript type.
-
-## Validation Options
-
-The `runSchemaValidation` function accepts a third parameter for configuration options:
-
-- **`strict`** (`boolean`): If `true`, throws an error when the object contains properties that are not defined in the schema.
-- **`output`** (`"exception" | "record"`): Determines the format in which errors are returned.
-  - `"exception"` (default): Throws a `ValidationError` exception.
-  - `"record"`: Returns an object where the keys are the properties and the values are arrays of the found errors.
-
-**Options example:**
+The inferred type is equivalent to:
 
 ```typescript
-// Returns errors without throwing an exception and validates in strict mode
-const errores = runSchemaValidation(user, userSchema, {
-  output: 'record',
-  strict: true,
+type User = {
+  name: string;
+  nickname?: string | null;
+  age?: number;
+};
+```
+
+Properties are optional by default. Use `isRequired: true` or `isOptional: false` to make a property required. Use `isNullable: true` to allow `null`.
+
+## Existing model types
+
+Schemas can still be checked against an existing class or interface:
+
+```typescript
+interface User {
+  name: string;
+  age?: number;
+}
+
+const userSchema = defineValidationSchema<User>({
+  name: {
+    isString: true,
+    isRequired: true,
+  },
+  age: {
+    isNumber: true,
+  },
+});
+
+userSchema.safeValidate({ name: 'Alice' });
+```
+
+## Rule configuration
+
+Rules keep a compact shorthand when no custom message is needed:
+
+```typescript
+const schema = defineValidationSchema({
+  name: {
+    isString: true,
+    minLength: 3,
+    isRequired: true,
+  },
 });
 ```
 
-### Validation of Nested Objects and Arrays
-
-You can validate complex structures, arrays, and nested objects using the `nestedSchema` rule.
+Rules can carry their own message. For rules with a value, use `value` and `message`:
 
 ```typescript
-const schemaComplejo: ValidationSchema = {
-  direccion: {
-    isObject: true,
-    nestedSchema: {
-      calle: { isRequired: true, isNotEmpty: true },
-      codigoPostal: { isNumber: true },
+const schema = defineValidationSchema({
+  name: {
+    isString: {
+      message: 'The name must be text',
+    },
+    minLength: {
+      value: 3,
+      message: 'The name must contain at least 3 characters',
+    },
+    isRequired: {
+      message: 'The name is mandatory',
     },
   },
-  etiquetas: {
-    isArray: { type: 'string' },
-    isRequired: true,
-  },
-};
+});
 ```
 
-It is also possible to directly pass an array of instances to `runSchemaValidation(arrayOfInstances, schema)`.
+The custom message replaces only the default message produced by that rule.
 
-## Available Rules (`ValidationRule`)
+## Available rules
 
-The following validation rules are available through the `ValidationRule` interface and can be used on any property:
+### Primitive and text rules
 
-### Text and Strings
+- `isString`: Requires a string.
+- `isBoolean`: Requires a boolean.
+- `isNumber`: Requires a number or `bigint`. Supports `isZero` and `type` (`integer`, `float` or `bigint`).
+- `isType`: Validates a primitive type: `string`, `number` or `boolean`.
+- `isEmail`: Validates an email address.
+- `isUrl`: Validates an HTTP, HTTPS or FTP URL.
+- `isPath`: Validates a path or URL path. Options include `noSpaces`, `noTrailingSlash`, `notEmpty` and `noQuery`.
+- `isUUID`: Validates UUID versions 1 through 8. A boolean configuration uses version 4.
+- `isDate`: Validates a `Date` or a parseable date string. Supports `YYYY-MM-DD`, `DD/MM/YYYY`, `MM/DD/YYYY` and `DD-MM-YYYY` formats.
+- `isJSON`: Validates a JSON string and can validate an expected structure.
+- `isNotAlpha`: Restricts numbers, accents and punctuation according to its options.
+- `minLength`: Sets the minimum length of a string or array.
+- `maxLength`: Sets the maximum length of a string or array.
+- `isNotEmpty`: Rejects empty strings and arrays.
 
-- **`isString: boolean`**: Verifies that the value is a string.
-- **`minLength: number`**: Minimum required length of a string.
-- **`maxLength: number`**: Maximum required length of a string.
-- **`isEmail: boolean`**: Verifies if the string is a valid email.
-- **`isUrl: boolean`**: Verifies if the string is a valid URL.
-- **`isPath: PathValidationOptions`**: Verifies if the string is a valid path. Allows configuring extra options (e.g., no spaces, not empty).
-- **`isUUID: boolean | { version?: number, provider?: "standard" | "oracle" }`**: Validates that it's a valid UUID identifier.
-- **`isJSON: boolean | { expectedStructure?: ExpectedStructure }`**: Verifies if the string is a valid JSON.
-- **`isNotAlpha: boolean | object`**: Validates that the text does **not** contain purely alphabetical characters, allowing numbers, accents, or symbols.
+### Structure and comparison rules
 
-### Numbers
+- `isArray`: Requires an array and optionally validates primitive element types. Supports `strict` element checking.
+- `isObject`: Requires an object. Supports `allowEmpty` and `allowArrays`.
+- `isInstance`: Requires an instance of a class.
+- `nestedSchema`: Applies another schema to an object or array of objects.
+- `isEqualTo`: Requires strict equality with a configured value.
+- `containsValue`: Requires an array, string or number to contain one of the configured values.
+- `blackList`: Rejects values found in a blacklist.
+- `whiteList`: Validates that a value belongs to an allowed list when called directly.
+- `isMin`: Requires a number greater than or equal to the configured minimum.
+- `isMax`: Requires a number less than or equal to the configured maximum.
 
-- **`isNumber: boolean | { isZero?: boolean, type?: NumberSchema }`**: Verifies that the value is numeric.
-- **`isMin: number`**: Minimum expected numeric value.
-- **`isMax: number`**: Maximum expected numeric value.
+### Presence rules
 
-### Data Types and Structure
-
-- **`isType: PrimitiveType`**: Verifies that the type matches a primitive ("string" | "number" | "boolean").
-- **`isBoolean: boolean`**: Validates that the input value is boolean.
-- **`isArray: boolean | { type: PrimitiveType, strict?: boolean }`**: Validates that the structure is an array.
-- **`isObject: boolean | { allowEmpty?: boolean, allowArrays?: boolean }`**: Verifies that the value is an object.
-
-### Required and Equality
-
-- **`isRequired: boolean`**: Strict property, throws an error if the value or property is null, undefined, or non-existent in the instance.
-- **`isOptional: boolean`**: Controls whether the property may be omitted. Set it to `false` to reject an `undefined` value. Existing schemas remain optional by default when this option is omitted.
-- **`isNullable: boolean`**: Controls whether the property may explicitly contain `null`. Set it to `false` to reject `null`; set it to `true` to document that `null` is accepted.
-- **`isNotEmpty: boolean`**: The value cannot be empty (works with strings, arrays, objects).
-- **`isEqualTo: any`**: Checks if the input value is strictly equal to the provided value.
-- **`containsValue: any[]`**: Checks if the tested value includes any of the elements from the options array.
-
-`isOptional` and `isNullable` control different cases. A property can be optional and nullable at the same time:
+`isOptional` and `isNullable` represent different conditions:
 
 ```typescript
-const profileSchema: ValidationSchema = {
+const profileSchema = defineValidationSchema({
   nickname: {
-    isOptional: true, // The property may be absent
-    isNullable: true, // The property may be null when present
+    isOptional: true,
+    isNullable: true,
+    isString: true,
   },
-};
+  email: {
+    isRequired: true,
+    isString: true,
+  },
+});
 ```
 
-`isRequired: true` continues to reject both `undefined` and `null`. These options only affect the property when they are explicitly set, preserving the behavior of existing schemas.
+- `isRequired: true`: Rejects both `undefined` and `null`.
+- `isOptional: true`: Allows the property to be omitted.
+- `isOptional: false`: Rejects an omitted property.
+- `isNullable: true`: Allows the property to contain `null`.
+- `isNullable: false`: Rejects `null`.
 
-### Classes and Nested Schemas
+## Nested schemas and arrays
 
-- **`isInstance: class`**: Verifies if the provided value is an instance of a specified class.
-- **`nestedSchema`**: An optional object with additional validation schema for embedded/nested structures.
+Use `nestedSchema` to compose object schemas:
 
-## Errors and Exceptions
+```typescript
+const productSchema = defineValidationSchema({
+  name: {
+    isString: true,
+    isRequired: true,
+  },
+});
 
-By default, if a validation fails, the library will throw an instance of `ValidationError` which can be accessed from `@catch`.
+const userSchema = defineValidationSchema({
+  products: {
+    nestedSchema: productSchema,
+  },
+});
+
+userSchema.safeValidate({
+  products: [{ name: 'Book' }, { name: '' }],
+});
+```
+
+You can replace the nested error tree with a custom message:
+
+```typescript
+const userSchema = defineValidationSchema({
+  product: {
+    nestedSchema: {
+      value: productSchema,
+      message: 'The product is invalid',
+    },
+  },
+});
+```
+
+## Options and strict mode
+
+Use `withOptions()` to derive an independent schema with different defaults:
+
+```typescript
+const strictUserSchema = userSchema.withOptions({
+  strict: true,
+  strictMessage: 'Extra properties are not allowed',
+});
+```
+
+Available options:
+
+- `strict`: Rejects properties not declared in the schema.
+- `strictMessage`: Replaces the default strict-mode error message.
+- `output`: Controls low-level validation output: `exception` or `record`.
+
+`validate()` always throws on failure. `safeValidate()` always returns a record or `undefined`.
+
+## Legacy validation function
+
+`runSchemaValidation()` remains available for existing users and function-based code:
+
+```typescript
+import { runSchemaValidation } from 'universal-scheme-validator';
+
+runSchemaValidation(user, userSchema);
+
+const errors = runSchemaValidation(user, userSchema, {
+  output: 'record',
+});
+```
+
+New code can use the schema methods directly.
+
+## Errors
+
+Validation failures thrown by `validate()` are instances of `ValidationError`:
 
 ```typescript
 import { ValidationError } from 'universal-scheme-validator';
 
 try {
-  // ...
+  userSchema.validate(user);
 } catch (error) {
   if (error instanceof ValidationError) {
     console.log(error.errors);
   }
 }
 ```
+
+The `errors` property contains the detailed error record grouped by property. Nested schemas preserve nested error paths unless a custom nested message is configured.
+
+## License
+
+MIT © Seerendo

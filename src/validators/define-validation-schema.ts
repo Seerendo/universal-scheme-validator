@@ -5,6 +5,7 @@ import { runSchemaValidation } from './run-schema-validation';
 export interface ValidationOptions {
   strict?: boolean;
   output?: OutputType;
+  strictMessage?: string;
 }
 
 export type DefinedValidationSchema<

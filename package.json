@@ -1,6 +1,6 @@
 {
   "name": "universal-scheme-validator",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
@@ -12,7 +12,9 @@
     "dev": "tsx watch src/index.ts",
     "format": "prettier --write \"src/**/*.ts\"",
     "format:check": "prettier --check \"src/**/*.ts\"",
+    "prepare": "husky",
     "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
     "test:watch": "vitest"
   },
   "keywords": [
@@ -28,6 +30,8 @@
   "license": "MIT",
   "description": "Validation schemas for class-based data models",
   "devDependencies": {
+    "@vitest/coverage-v8": "^4.1.11",
+    "husky": "^9.1.7",
     "lint-staged": "^17.3.0",
     "prettier": "^3.9.6",
     "reflect-metadata": "^0.2.2",
@@ -36,7 +40,7 @@
     "vitest": "^4.1.11"
   },
   "lint-staged": {
-    "src/**/*.ts": [
+    "{src,test}/**/*.ts": [
       "prettier --write"
     ]
   },

@@ -26,3 +26,4 @@ export * from './validate-max-length';
 export * from './validate-min-length';
 export * from './validate-nested-schema';
 export * from './validate-black-list';
+export * from './validate-white-list';

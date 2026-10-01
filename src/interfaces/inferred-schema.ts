@@ -6,7 +6,7 @@ import { ValidationRule } from './validation-rule';
 export type InferredSchemaDefinition = Record<string, InferredValidationRule>;
 
 export type InferredValidationRule = Omit<ValidationRule<any>, 'nestedSchema'> & {
-  nestedSchema?: InferredSchemaDefinition;
+  nestedSchema?: InferredSchemaDefinition | { value: InferredSchemaDefinition; message?: string };
 };
 
 type SchemaFields<S extends Record<string, unknown>> = Omit<
@@ -31,22 +31,44 @@ type ArrayValue<R> = R extends { isArray: infer ArrayRule }
 type DeclaredRuleValue<R> =
   | (R extends { nestedSchema: infer Nested extends Record<string, unknown> }
       ? InferValidationSchema<Nested>
-      : never)
-  | (R extends { isInstance: new (...args: any[]) => infer Instance } ? Instance : never)
+      : R extends {
+            nestedSchema: { value: infer Nested extends Record<string, unknown> };
+          }
+        ? InferValidationSchema<Nested>
+        : never)
+  | (R extends { isInstance: new (...args: any[]) => infer Instance }
+      ? Instance
+      : R extends {
+            isInstance: { value: new (...args: any[]) => infer ConfiguredInstance };
+          }
+        ? ConfiguredInstance
+        : never)
   | ArrayValue<R>
-  | (R extends { isBoolean: true } | { isType: 'boolean' } ? boolean : never)
+  | (R extends
+      | { isBoolean: true | { message?: string } }
+      | { isType: 'boolean' | { value: 'boolean'; message?: string } }
+      ? boolean
+      : never)
   | (R extends { isNumber: infer NumberRule }
       ? NumberRule extends { type: 'bigint' }
         ? bigint
         : NumberRule extends false
           ? never
           : number
-      : R extends { isType: 'number' }
+      : R extends { isType: 'number' | { value: 'number'; message?: string } }
         ? number
         : never)
-  | (R extends { isString: true } | { isType: 'string' } ? string : never)
+  | (R extends
+      | { isString: true | { message?: string } }
+      | { isType: 'string' | { value: 'string'; message?: string } }
+      ? string
+      : never)
   | (R extends { isDate: true } ? Date : never)
-  | (R extends { isEqualTo: infer EqualValue } ? EqualValue : never);
+  | (R extends { isEqualTo: { value: infer EqualValue } }
+      ? EqualValue
+      : R extends { isEqualTo: infer EqualValue }
+        ? EqualValue
+        : never);
 
 type RuleValue<R> = [DeclaredRuleValue<R>] extends [never] ? unknown : DeclaredRuleValue<R>;
 
@@ -107,6 +129,12 @@ type Simplify<T> = { [K in keyof T]: T[K] };
  * // @ts-expect-error name is required and must be a string.
  * const invalidUser: UserFromSchema = {};
  */
-export type InferValidationSchema<S extends Record<string, unknown>> = Simplify<
+type InferSchemaFields<S extends Record<string, unknown>> = Simplify<
   RequiredFields<S> & OptionalFields<S>
 >;
+
+export type InferValidationSchema<S extends Record<string, unknown>> = S extends {
+  validate(instance: infer T): void;
+}
+  ? T
+  : InferSchemaFields<S>;

@@ -3,6 +3,7 @@ import { validateProperty } from '../functions/validate-property';
 import { ValidationError } from '../errors';
 import { OutputType } from '../types';
 import { ValidationSchema } from '../interfaces';
+import { getRuleMessage, getRuleValue, isRuleEnabled } from '../helpers';
 
 /**
  * Validates a Schema according to the specified validation guidelines
@@ -93,12 +94,12 @@ import { ValidationSchema } from '../interfaces';
 export function runSchemaValidation<T>(
   instance: T | T[],
   schema: ValidationSchema<T>,
-  options: { strict?: boolean; output?: OutputType } = {
+  options: { strict?: boolean; output?: OutputType; strictMessage?: string } = {
     strict: false,
     output: 'exception',
   }
 ): void | Record<string, any> {
-  const { strict = false, output = 'exception' } = options;
+  const { strict = false, output = 'exception', strictMessage } = options;
 
   if (Array.isArray(instance)) {
     const allErrors: Record<number, any> = {};
@@ -136,7 +137,9 @@ export function runSchemaValidation<T>(
     const extraProperties = instanceKeys.filter((key) => !schemaKeys.includes(key));
 
     if (extraProperties.length > 0) {
-      errors['_strict'] = [`Properties not present in the schema: ${extraProperties.join(', ')}`];
+      errors['_strict'] = [
+        strictMessage ?? `Properties not present in the schema: ${extraProperties.join(', ')}`,
+      ];
     }
   }
 
@@ -146,16 +149,34 @@ export function runSchemaValidation<T>(
 
     const value = (instance as any)[property];
 
-    if (rules.isRequired && (value === undefined || value === null)) {
-      errors[property] = [`The property '${property}' is required`];
+    if (isRuleEnabled(rules.isRequired) && (value === undefined || value === null)) {
+      errors[property] = [
+        getRuleMessage(rules.isRequired) ?? `The property '${property}' is required`,
+      ];
       continue;
     }
 
     const presenceErrors = [
-      ...validateIsOptional(value, rules.isOptional, 'record', property),
-      ...validateIsNullable(value, rules.isNullable, 'record', property),
+      ...validateIsOptional(
+        value,
+        getRuleValue(rules.isOptional) as boolean | undefined,
+        'record',
+        property
+      ),
+      ...validateIsNullable(
+        value,
+        getRuleValue(rules.isNullable) as boolean | undefined,
+        'record',
+        property
+      ),
     ];
     if (presenceErrors.length > 0) {
+      if (value === undefined && getRuleMessage(rules.isOptional)) {
+        presenceErrors[0] = getRuleMessage(rules.isOptional)!;
+      }
+      if (value === null && getRuleMessage(rules.isNullable)) {
+        presenceErrors[0] = getRuleMessage(rules.isNullable)!;
+      }
       errors[property] = presenceErrors;
       continue;
     }
@@ -165,13 +186,14 @@ export function runSchemaValidation<T>(
     }
 
     if (rules?.nestedSchema) {
-      const nestedErrors = validateNestedSchema(value, rules.nestedSchema, {
+      const nestedSchema = getRuleValue(rules.nestedSchema) as any;
+      const nestedErrors = validateNestedSchema(value, nestedSchema, {
         strict,
         output: 'record',
       });
 
       if (Object.keys(nestedErrors).length > 0) {
-        errors[property] = nestedErrors;
+        errors[property] = getRuleMessage(rules.nestedSchema) ?? nestedErrors;
       }
     }
 

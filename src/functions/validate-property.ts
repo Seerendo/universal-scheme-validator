@@ -24,6 +24,7 @@ import {
   validateBlackList,
 } from '../rules';
 import { ValidationRule } from '../interfaces/validation-rule';
+import { applyRuleMessage, getRuleValue } from '../helpers';
 
 /**
  * Validates a property of an object according to the specified validation rules.
@@ -79,118 +80,128 @@ import { ValidationRule } from '../interfaces/validation-rule';
 export function validateProperty<T>(value: any, rules: ValidationRule<T>): string[] {
   const propertyErrors: string[] = [];
 
+  const runRule = (rule: unknown, validate: () => string[]) => {
+    propertyErrors.push(...applyRuleMessage(validate(), rule));
+  };
+
   // Validation of blackList
   if (rules.blackList !== undefined) {
-    propertyErrors.push(...validateBlackList(value, rules.blackList));
+    runRule(rules.blackList, () => validateBlackList(value, getRuleValue(rules.blackList)!));
   }
 
   // Validation of maxLength
   if (rules.maxLength !== undefined) {
-    propertyErrors.push(...validateMaxLength(value, rules.maxLength));
+    runRule(rules.maxLength, () => validateMaxLength(value, getRuleValue(rules.maxLength)!));
   }
 
   // Validation of minLength
   if (rules.minLength !== undefined) {
-    propertyErrors.push(...validateMinLength(value, rules.minLength));
+    runRule(rules.minLength, () => validateMinLength(value, getRuleValue(rules.minLength)!));
   }
 
   // Validation of isNumber
   if (rules.isNumber) {
-    propertyErrors.push(...validateIsNumber(value, rules.isNumber));
+    runRule(rules.isNumber, () => validateIsNumber(value, getRuleValue(rules.isNumber) as any));
   }
 
   // Validation of isString
   if (rules.isString) {
-    propertyErrors.push(...validateIsString(value));
+    runRule(rules.isString, () => validateIsString(value));
   }
 
   if (rules.isArray) {
-    propertyErrors.push(...validateIsArray(value, rules.isArray));
+    runRule(rules.isArray, () => validateIsArray(value, getRuleValue(rules.isArray) as any));
   }
 
   // Validation of isType
   if (rules.isType) {
-    propertyErrors.push(...validateIsType(value, rules.isType));
+    runRule(rules.isType, () => validateIsType(value, getRuleValue(rules.isType) as any));
   }
 
   // Validation of isBoolean
   if (rules.isBoolean) {
-    propertyErrors.push(...validateIsBoolean(value));
+    runRule(rules.isBoolean, () => validateIsBoolean(value));
   }
 
   // Validation of isEmail
   if (rules.isEmail) {
-    propertyErrors.push(...validateIsEmail(value));
+    runRule(rules.isEmail, () => validateIsEmail(value));
   }
 
   // Validation of isNotAlpha
   if (rules.isNotAlpha) {
-    propertyErrors.push(...validateIsNotAlpha(value, rules.isNotAlpha));
+    runRule(rules.isNotAlpha, () =>
+      validateIsNotAlpha(value, getRuleValue(rules.isNotAlpha) as any)
+    );
   }
 
   // Validation of isInstance
   if (rules.isInstance) {
-    propertyErrors.push(...validateInstance(value, rules.isInstance));
+    runRule(rules.isInstance, () =>
+      validateInstance(value, getRuleValue(rules.isInstance) as new (...args: any[]) => T)
+    );
   }
 
   // Validation of isUUID
   if (rules.isUUID) {
-    propertyErrors.push(...validateIsUUID(value, rules.isUUID));
+    runRule(rules.isUUID, () => validateIsUUID(value, getRuleValue(rules.isUUID) as any));
   }
 
   // Validation of containsValue
   if (rules.containsValue) {
-    propertyErrors.push(...validateContainsValue(value, rules.containsValue));
+    runRule(rules.containsValue, () =>
+      validateContainsValue(value, getRuleValue(rules.containsValue)!)
+    );
   }
 
   // Validation of isDate
   if (rules.isDate) {
-    propertyErrors.push(...validateIsDate(value, rules.isDate));
+    runRule(rules.isDate, () => validateIsDate(value, getRuleValue(rules.isDate) as any));
   }
 
   // Validation of isRequired
   if (rules.isRequired) {
-    propertyErrors.push(...validateIsRequired(value));
+    runRule(rules.isRequired, () => validateIsRequired(value));
   }
 
   // Validation of isNotEmpty
   if (rules.isNotEmpty) {
-    propertyErrors.push(...validateIsNotEmpty(value));
+    runRule(rules.isNotEmpty, () => validateIsNotEmpty(value));
   }
 
   // Validation of isUrl
   if (rules.isUrl) {
-    propertyErrors.push(...validateIsUrl(value));
+    runRule(rules.isUrl, () => validateIsUrl(value));
   }
 
   // Validation of isPath
   if (rules.isPath) {
-    propertyErrors.push(...validateIsPath(value, rules.isPath));
+    runRule(rules.isPath, () => validateIsPath(value, rules.isPath!));
   }
 
   // Validation of isJSON
   if (rules.isJSON) {
-    propertyErrors.push(...validateIsJSON(value, rules.isJSON));
+    runRule(rules.isJSON, () => validateIsJSON(value, getRuleValue(rules.isJSON) as any));
   }
 
   // Validation of isMin
   if (rules.isMin !== undefined) {
-    propertyErrors.push(...validateIsMin(value, rules.isMin));
+    runRule(rules.isMin, () => validateIsMin(value, getRuleValue(rules.isMin)!));
   }
 
   // Validation of isMax
   if (rules.isMax !== undefined) {
-    propertyErrors.push(...validateIsMax(value, rules.isMax));
+    runRule(rules.isMax, () => validateIsMax(value, getRuleValue(rules.isMax)!));
   }
 
   // Validation of isEqualTo
   if (rules.isEqualTo !== undefined) {
-    propertyErrors.push(...validateIsEqualTo(value, rules.isEqualTo));
+    runRule(rules.isEqualTo, () => validateIsEqualTo(value, getRuleValue(rules.isEqualTo)));
   }
 
   // Validation of isObject
   if (rules.isObject) {
-    propertyErrors.push(...validateIsObject(value, rules.isObject));
+    runRule(rules.isObject, () => validateIsObject(value, getRuleValue(rules.isObject) as any));
   }
 
   return propertyErrors;
