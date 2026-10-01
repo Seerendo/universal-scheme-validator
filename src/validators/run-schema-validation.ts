@@ -186,7 +186,9 @@ export function runSchemaValidation<T>(
     }
 
     if (rules?.nestedSchema) {
-      const nestedSchema = getRuleValue(rules.nestedSchema) as any;
+      const nestedSchema = getRuleMessage(rules.nestedSchema)
+        ? getRuleValue(rules.nestedSchema)
+        : (rules.nestedSchema as any);
       const nestedErrors = validateNestedSchema(value, nestedSchema, {
         strict,
         output: 'record',
